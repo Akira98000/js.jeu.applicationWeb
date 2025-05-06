@@ -1,0 +1,2875 @@
+/* 
+ * PRIORITÉ ABSOLUE : SUPPRESSION DES ARRIÈRE-PLANS DU CHAMP 
+ * Ces règles doivent prendre priorité sur toutes les autres
+ */
+.field, 
+.field-container, 
+body .field, 
+body .field-container, 
+.game-content .field, 
+.game-content .field-container,
+.field[style], 
+.field-container[style] {
+    background: none !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* 
+ * PRIORITÉ ABSOLUE : ANIMATION DU MAÏS
+ */
+.seed.corn, 
+body .seed.corn, 
+.seed-item .seed.corn, 
+.seed-item[data-seed-type="corn"] .seed,
+*[data-seed-type="corn"] {
+    animation: corn-bounce 1.5s infinite alternate ease-in-out !important;
+    transform-origin: center center !important;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Nunito', Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: url('../assets/background.png');
+    min-height: 100vh;
+    user-select: none; /* Empêche la sélection de texte dans tout le jeu */
+    height: 100%;
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+}
+
+/* Permettre la sélection de texte uniquement dans certains cas spécifiques si nécessaire */
+.allow-select {
+    user-select: text;
+}
+
+h1 {
+    color: #2e7d32;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    font-size: 2.5em;
+    margin: 20px 0;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-10px); }
+}
+
+.highlight {
+    animation: glow 1s infinite alternate;
+    box-shadow: 0 0 10px #4CAF50;
+}
+
+@keyframes glow {
+    from { box-shadow: 0 0 5px #4CAF50; }
+    to { box-shadow: 0 0 15px #4CAF50, 0 0 25px white; }
+}
+
+/* Container styles avec des améliorations visuelles */
+.stats-container {
+    background-color: #F7D29B; /* Beige clair pour les stats */
+    border: 2px solid #E19C4F; /* Bordure orange */
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 25px;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    max-width: 90%;
+}
+
+.stats-group {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.5rem 0.75rem;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    font-style: normal;
+    font-size: 1.2rem;
+}
+
+.stat-label {
+    color: #1b5e20;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.stat-value {
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    min-width: 2rem;
+    text-align: right;
+}
+
+/* Styles spécifiques pour certaines stats */
+.stat-item.timer .stat-value {
+    color: #f44336;
+    animation: pulse-text 1s infinite alternate;
+}
+
+.stat-item.money .stat-value {
+    color: #43a047;
+    font-weight: bold;
+    font-size: 1.1em;
+    background: rgba(67, 160, 71, 0.1);
+    border: 1px solid rgba(67, 160, 71, 0.3);
+    transition: all 0.3s ease;
+}
+
+.stat-item.money .stat-value.updating {
+    animation: money-update 0.5s ease;
+}
+
+@keyframes money-update {
+    0% { background-color: rgba(255, 215, 0, 0.3); transform: scale(1.2); }
+    50% { background-color: rgba(255, 215, 0, 0.5); }
+    100% { background-color: rgba(67, 160, 71, 0.1); transform: scale(1); }
+}
+
+.stat-item.level .stat-value {
+    color: #4fc3f7;
+}
+
+/* Responsive design pour le header */
+@media (max-width: 768px) {
+    .stats-container {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0.5rem;
+    }
+
+    .stats-group {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .stat-item {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.9rem;
+    }
+
+    .title-text {
+        font-size: 1.2rem;
+    }
+}
+
+/* Styles communs pour les panneaux latéraux */
+.market, .upgrades {
+    position: sticky;
+    top: 120px;
+    width: 24%;
+    min-width: 240px;
+    max-width: 340px;
+    height: auto;
+    max-height: 75vh;
+    background: linear-gradient(135deg, #a5d6a7 0%, #81c784 100%);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 18px;
+    box-sizing: border-box;
+    z-index: 5;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Styles spécifiques pour le marché */
+.market {
+    margin-right: 0;
+    order: initial;
+}
+
+/* Styles spécifiques pour les améliorations */
+.upgrades {
+    margin-left: 0;
+    order: initial;
+}
+
+/* Remettre le conteneur principal à son état d'origine */
+.game-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 9vw;
+    max-height: calc(100vh - 180px);
+    width: 100%;
+    padding: 0 5%;
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* Créer un conteneur pour le champ central */
+.field-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    position: relative;
+}
+
+.field {
+    width: 440px;
+    height: 440px;
+    min-width: 400px;
+    min-height: 400px;
+    max-width: 480px;
+    max-height: 480px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 15px;
+    padding: 20px;
+    background-color: #8BC349 !important; /* Vert herbe comme dans l'image */
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1;
+    position: relative;
+    transform: none;
+    left: auto;
+    top: auto;
+}
+
+/* Styles responsifs pour le conteneur */
+@media (min-width: 1400px) {
+    .game-container {
+        gap: 10vw; /* Plus grand espacement sur les grands écrans */
+        padding: 0 8%;
+    }
+}
+
+@media (max-width: 1200px) {
+    .game-container {
+        gap: 6vw; /* Espacement moyen sur les écrans moyens */
+        padding: 0 4%;
+    }
+}
+
+@media (max-width: 992px) {
+    .game-container {
+        gap: 4vw; /* Espacement réduit sur les petits écrans */
+        padding: 0 3%;
+    }
+}
+
+/* Styles responsifs pour différentes tailles d'écran */
+@media (min-width: 1600px) {
+    .field {
+        width: 480px; /* Très grands écrans */
+        height: 480px;
+        min-width: 460px;
+        min-height: 460px;
+    }
+}
+
+@media (min-width: 1400px) and (max-width: 1599px) {
+    .field {
+        width: 460px; /* Grands écrans */
+        height: 460px;
+    }
+}
+
+@media (min-width: 1100px) and (max-width: 1399px) {
+    .field {
+        width: 440px; /* Écrans moyens à grands */
+        height: 440px;
+    }
+}
+
+@media (max-width: 1099px) {
+    .field {
+        width: 400px; /* Écrans plus petits */
+        height: 400px;
+    }
+}
+
+/* S'assurer que les nouveaux champs apparaissent correctement */
+.field .plot {
+    z-index: 1;
+    position: relative;
+}
+
+/* Améliorer le conteneur de défilement pour qu'il prenne la hauteur disponible */
+.scroll-container {
+    flex: 1;
+    height: 100%;
+    max-height: calc(75vh - 90px); /* Ajusté pour le plus grand padding */
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    padding: 12px 16px 12px 12px; /* Augmenter le padding */
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.15); /* Légèrement plus visible */
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.08);
+    position: relative;
+    margin-top: 15px; /* Plus d'espace sous le titre */
+}
+
+/* S'assurer que les titres des panneaux n'occupent pas trop d'espace */
+.market h3, .upgrades h3 {
+    margin-top: 0;
+    margin-bottom: 15px; /* Plus d'espace sous le titre */
+    font-size: 1.3em; /* Légèrement plus grand */
+    color: #2e7d32;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+    text-align: center;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+    padding-bottom: 10px; /* Plus d'espace sous la bordure */
+}
+
+/* Styliser la scrollbar pour un look moderne */
+.scroll-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+    background: rgba(46, 125, 50, 0.5);
+    border-radius: 10px;
+    transition: background 0.3s;
+}
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(46, 125, 50, 0.8);
+}
+
+/* Styles des groupes de graines et d'améliorations */
+.seeds-group, .upgrade-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 12px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Création de deux colonnes pour les graines */
+.seeds-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 12px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Style pour les éléments de graine */
+.seed-item {
+    background-color: #F7D29B; /* Fond beige clair comme la barre de stats */
+    border: 1px solid #E19C4F; /* Bordure orangée */
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    border-radius: 12px;
+    width: 32%;
+    height: 90px;
+    box-sizing: border-box;
+    margin-bottom: 6px;
+}
+
+.seed-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    background-color: #FFE0B2; /* Beige plus clair au survol */
+}
+
+/* Style pour les éléments d'amélioration */
+.upgrade-item {
+    display: flex;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.5) 100%);
+    align-items: center;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    height: auto;
+    min-height: 0;
+}
+
+.upgrade-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Style pour chaque parcelle de terrain */
+.plot {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    background-color: #614126; /* Marron foncé pour les parcelles */
+    border: 4px solid #4D331E;
+    border-radius: 16px; /* Coins arrondis plus prononcés */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: visible;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.plot:hover {
+    transform: scale(1.05) translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.plot img, .plot .plant {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    object-fit: contain;
+}
+
+.plot .plant {
+    font-size: 3.2em; /* Plus grand pour correspondre à la taille du champ */
+}
+
+/* Style d'items amélioré pour les graines et les améliorations */
+.seed-item, .upgrade-item {
+    animation: fade-in-up 0.3s ease-out;
+    opacity: 0;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fade-in-up {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animation différée pour chaque élément */
+.seed-item:nth-child(1), .upgrade-item:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.seed-item:nth-child(2), .upgrade-item:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.seed-item:nth-child(3), .upgrade-item:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.seed-item:nth-child(4), .upgrade-item:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+/* Style commun pour les graines - taille fixe et centrée */
+.seed {
+    font-size: 2em !important; /* Taille standard pour toutes les graines */
+    transition: all 0.3s ease;
+    cursor: grab;
+    filter: drop-shadow(0 0 5px rgba(76, 175, 80, 0.3));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px !important; /* Hauteur fixe standardisée */
+    width: 40px !important; /* Largeur fixe standardisée */
+    margin: 0 auto 8px auto !important; /* Marge uniforme */
+    padding: 0 !important;
+    line-height: 1 !important;
+    position: static !important;
+    transform: none !important;
+}
+
+.seed:hover {
+    transform: scale(1.15) rotate(5deg) !important;
+    filter: drop-shadow(0 0 10px rgba(76, 175, 80, 0.7)) brightness(1.2) !important;
+    transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) !important;
+    animation: seed-hover-pulse 0.8s infinite alternate !important;
+}
+
+.seed:active {
+    cursor: grabbing;
+    transform: scale(0.95) !important;
+}
+
+/* Supprimer tous les styles spécifiques qui pourraient interférer */
+.seed.corn::before, 
+.seed.radish::before, 
+.seed.tomato::before, 
+.seed.potato::before, 
+.seed.carrot::before, 
+.seed.basic::before {
+    content: none !important;
+    display: none !important;
+}
+
+/* Supprimer tous les styles spécifiques contradictoires */
+.seed.corn, 
+.seed.radish, 
+.seed.tomato, 
+.seed.potato, 
+.seed.carrot, 
+.seed.basic {
+    font-size: 2em !important;
+    height: 40px !important;
+    width: 40px !important;
+    margin: 0 auto 8px auto !important;
+    position: static !important;
+    transform: none !important;
+}
+
+/* Style pour le texte des graines */
+.seed-item p {
+    margin: 5px 0 0 0;
+    font-weight: 600;
+    color: #2e7d32;
+    width: 100%;
+    text-align: center;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s ease;
+}
+
+.seed-item p:hover {
+    color: #1b5e20;
+    text-decoration: underline;
+    transform: scale(1.05);
+    text-shadow: 0 0 3px rgba(76, 175, 80, 0.3);
+}
+
+/* Amélioration du bouton d'achat de champ */
+#buy-field {
+    width: 95%;
+    margin: 10px auto;
+    padding: 10px;
+    font-size: 0.95em;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    color: white;
+    border: none;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+#buy-field:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Masquer les éléments de navigation qui ne sont plus nécessaires */
+.nav-arrow, .nav-dots {
+    display: none;
+}
+
+/* Effet subtil de hover sur les conteneurs */
+.market:hover, .upgrades:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Animation de feedback lors du défilement */
+@keyframes scroll-feedback {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+}
+
+.scroll-container:active {
+    background-size: 200% 200%;
+    animation: scroll-feedback 0.5s ease;
+}
+
+.market img, .tools img { 
+    width: 60px;
+    height: 60px;
+    cursor: grab;
+    transition: transform 0.2s;
+    user-select: none;
+}
+
+.market img:active, .tools img:active {
+    cursor: grabbing;
+}
+
+.market img:hover, .tools img:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 10px rgba(76, 175, 80, 0.5));
+}
+
+/* Error message styles - Supprimé car géré dans responsive-fixes.css */
+#error-message {
+    display: none;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Game over styles */
+.game-over {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    z-index: 2000;
+}
+
+.game-over-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+}
+
+.game-over-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    border: 2px solid #4CAF50;
+    z-index: 2001;
+}
+
+.game-over h2 {
+    color: #2e7d32;
+    margin-bottom: 1.5rem;
+    font-size: 2.2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    animation: pulse 2s infinite;
+}
+
+.game-over #finalStats {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    text-align: left;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    line-height: 1.5;
+}
+
+.game-over #finalStats h3 {
+    color: #2e7d32;
+    margin-bottom: 0.8rem;
+    border-bottom: 2px solid rgba(76, 175, 80, 0.2);
+    padding-bottom: 5px;
+}
+
+.game-over #finalStats h4 {
+    color: #4CAF50;
+    margin: 1.2rem 0 0.5rem;
+}
+
+.game-over #finalStats p {
+    margin: 0.5rem 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.game-over.show-game-over {
+    display: block;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.restart {
+    background: linear-gradient(45deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: block;
+    margin: 0 auto;
+}
+
+.restart:hover {
+    background: linear-gradient(45deg, #45a049 0%, #388e3c 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 768px) {
+    .game-over-content {
+        padding: 1.5rem;
+        width: 95%;
+    }
+    
+    .game-over h2 {
+        font-size: 1.8rem;
+    }
+    
+    .game-over #finalStats {
+        font-size: 0.9rem;
+    }
+}
+
+.upgrade-item {
+    display: flex;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.5) 100%);
+    align-items: center;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    height: auto;
+    min-height: 0;
+}
+
+.upgrade-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.upgrade-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-left: 15px; /* Plus d'espace à gauche */
+    gap: 12px; /* Plus d'espace entre les éléments */
+}
+
+.tool-level-container, .tool-stat-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.tool-level-label, .tool-stat-label {
+    font-size: 0.8em;
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+.tool-stat-value {
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #1b5e20;
+    background-color: rgba(255, 255, 255, 0.6);
+    padding: 3px 8px;
+    border-radius: 10px;
+}
+
+.upgrade-button {
+    padding: 10px 15px; /* Plus de padding */
+    margin-top: 10px; /* Plus d'espace au-dessus */
+    font-size: 0.85em;
+    background-color: #F5A742; /* Orange pour les boutons d'amélioration */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    width: 100%;
+}
+
+.upgrade-button:hover {
+    background-color: #F7B760; /* Orange plus clair au survol */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.upgrade-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #666;
+}
+
+.upgrade-button.cannot-afford {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #666;
+}
+
+.upgrade-icon {
+    font-size: 1rem;
+}
+
+/* Style pour le conteneur d'outils */
+.tools-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 12px 15px;
+    background-color: #8B5E3C; /* Barre d'outils en bois */
+    border-top: 4px solid #614126;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    pointer-events: auto;
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.tool {
+    width: 60px !important;
+    height: 60px !important;
+    padding: 8px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    margin: 0 10px;
+    border: 2px solid rgba(76, 175, 80, 0.4);
+}
+
+.tools-wrapper {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+}
+
+.tools h3 {
+    margin: 0 0 8px 0;
+    color: #2e7d32;
+    font-size: 1.1em;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Animation pour le texte de récolte (argent) */
+.harvest-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ffc107;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    animation: float-up 1s forwards ease-out;
+}
+
+.seeds-text {
+    animation: float-up 1.5s forwards ease-out;
+    animation-delay: 0.2s;
+}
+
+@keyframes float-up {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.3);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -80%) scale(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -150%) scale(1);
+    }
+}
+
+/* Animation pour l'effet de récolte sur le plot */
+.plot.sound-effect::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 12px;
+    animation: harvest-glow 0.8s ease-out forwards;
+    z-index: 5;
+}
+
+@keyframes harvest-glow {
+    0% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 1; transform: scale(1.1); }
+    100% { opacity: 0; transform: scale(1.5); }
+}
+
+/* Ajouter l'aura verte uniquement pour les plots matures */
+.plot[data-state="mature"] {
+    cursor: pointer;
+    position: relative;
+    overflow: visible;
+    z-index: 5;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+}
+
+.plot[data-state="mature"]:hover {
+    transform: scale(1.05);
+    z-index: 10;
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.8);
+}
+
+.plot[data-state="mature"] .plant {
+    animation: pulse 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.plot[data-state="mature"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(76, 175, 80, 0.3) 0%, rgba(76, 175, 80, 0) 70%);
+    border-radius: 12px;
+    z-index: -1;
+    animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+/* Amélioration des boutons */
+button {
+    background: linear-gradient(45deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Styles pour les notifications de niveau */
+.level-complete {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1100;
+}
+
+.level-complete.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.level-complete h3 {
+    font-size: 1.8em;
+    margin: 0 0 15px 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.level-complete p {
+    font-size: 1.2em;
+    margin: 10px 0;
+}
+
+/* Amélioration des animations de plantes */
+.plant {
+    font-size: 2.5em !important;
+    animation: grow 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    height: 80%;
+}
+
+@keyframes grow {
+    0% { 
+        transform: translate(-50%, -50%) scale(0.5) translateY(20px);
+        opacity: 0;
+    }
+    50% { 
+        transform: translate(-50%, -50%) scale(1.2) translateY(-10px);
+    }
+    100% { 
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+.plot[data-state="seeded"] .plant {
+    animation: grow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Animation pour le timer */
+#timer {
+    font-weight: bold;
+    color: #2e7d32;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    animation: pulse-text 1s infinite alternate;
+}
+
+@keyframes pulse-text {
+    from { opacity: 0.8; }
+    to { opacity: 1; }
+}
+
+/* Styles du marché améliorés */
+.seeds-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.seeds-group, .upgrade-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    height: auto;
+    min-height: 200px;
+}
+
+.seed-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.5) 100%);
+    padding: 12px;
+    border-radius: 12px;
+    margin: 0 auto;
+    width: 90%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    height: 110px !important;
+    box-sizing: border-box;
+}
+
+.seed-item p {
+    margin: 5px 0 0 0;
+    font-weight: 600;
+    color: #2e7d32;
+    width: 100%;
+    text-align: center;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s ease;
+}
+
+.seed-item p:hover {
+    color: #1b5e20;
+    text-decoration: underline;
+    transform: scale(1.05);
+    text-shadow: 0 0 3px rgba(76, 175, 80, 0.3);
+}
+
+/* Amélioration des outils */
+.tool {
+    width: 60px !important;
+    height: 60px !important;
+    padding: 8px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    margin: 0 10px;
+    border: 2px solid rgba(76, 175, 80, 0.4);
+}
+
+.tool:hover {
+    transform: scale(1.15) translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+}
+
+/* Effet de scroll doux avec des indicateurs de direction */
+.scroll-container::before,
+.scroll-container::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 12px;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.scroll-container::before {
+    top: 10px;
+    background: linear-gradient(to bottom, rgba(46, 125, 50, 0.4), transparent);
+    border-radius: 50% 50% 0 0;
+}
+
+.scroll-container::after {
+    bottom: 10px;
+    background: linear-gradient(to top, rgba(46, 125, 50, 0.4), transparent);
+    border-radius: 0 0 50% 50%;
+}
+
+.scroll-container.is-scrolling::before,
+.scroll-container.is-scrolling::after {
+    opacity: 1;
+}
+
+/* Style des images des améliorations */
+.upgrade-item img {
+    width: 45px;
+    height: 45px;
+    margin-right: 12px;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.upgrade-item:hover img {
+    transform: scale(1.1);
+}
+
+/* Restaurer et améliorer la barre de progression des niveaux d'outils */
+.tool-level-bar {
+    position: relative;
+    height: 16px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.tool-level-progress {
+    position: absolute;
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #8BC34A);
+    border-radius: 8px;
+    transition: width 0.5s ease;
+    width: 0%;
+}
+
+.tool-level-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #333;
+    z-index: 2;
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+}
+
+/* Style de l'icône d'amélioration */
+.upgrade-icon {
+    font-size: 1em;
+    margin-right: 5px;
+}
+
+/* Style pour l'élément d'expansion */
+.upgrade-item.expansion {
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(240, 255, 240, 0.9), rgba(220, 240, 220, 0.8));
+}
+
+.upgrade-item.expansion:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Styles pour les tooltips au survol des éléments */
+.seed-item, .upgrade-item, .tool-item {
+    position: relative;
+}
+
+/* Garantir que l'animation du maïs fonctionne correctement */
+.seed.corn {
+    font-size: 1.8em !important;
+    animation: corn-bounce 1.5s infinite alternate ease-in-out !important;
+    transform: none !important; /* Supprimer tout transform qui interfère */
+}
+
+/* Animation spécifique pour le maïs */
+@keyframes corn-bounce {
+    0% {
+        transform: scale(1) translateY(0) rotate(0deg) !important;
+    }
+    100% {
+        transform: scale(1.1) translateY(-5px) rotate(5deg) !important;
+    }
+}
+
+/* Rendre l'animation visible quel que soit le parent */
+.seed-item .seed.corn, 
+.seeds-group .seed.corn, 
+.container .seed.corn,
+body .seed.corn {
+    animation: corn-bounce 1.5s infinite alternate ease-in-out !important;
+    transform-origin: center center !important;
+}
+
+/* Style pour l'indicateur d'arrosage */
+.water-indicator {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 1.5em;
+    animation: bounce 1s infinite alternate;
+    z-index: 10;
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
+}
+
+/* Style pour le conteneur d'outils */
+.tools-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.95);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    pointer-events: auto;
+    border-top: 2px solid rgba(76, 175, 80, 0.7);
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Style pour boîte d'améliorations verticale */
+.upgrade-group.vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    min-height: auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Style pour les éléments d'amélioration en pleine largeur */
+.upgrade-item.full-width {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #F7D29B; /* Fond beige clair comme les éléments de graines */
+    border: 1px solid #E19C4F; /* Bordure orangée */
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.upgrade-item.full-width:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    background-color: #FFE0B2; /* Beige plus clair au survol */
+}
+
+/* Animation pour la goutte d'eau */
+@keyframes bounce {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Style pour l'indicateur de récolte */
+.harvest-indicator {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #4CAF50;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    animation: pulse 1.5s infinite;
+}
+
+.harvest-icon {
+    font-size: 1.2em;
+}
+
+.harvest-label {
+    font-weight: bold;
+}
+
+/* Style pour le bouton d'expansion */
+.expansion-button {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1em;
+    background: linear-gradient(135deg, #8BC34A, #4CAF50);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.expansion-button:hover {
+    background: linear-gradient(135deg, #7CB342, #43A047);
+    transform: scale(1.02);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Ajout du style pour .needs-water */
+.plant.needs-water {
+    opacity: 0.7;
+    filter: brightness(0.8);
+}
+
+/* Améliorer les contrôles sonores */
+.sound-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-left: 10px;
+}
+
+.mute-button {
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 18px;
+    padding: 0;
+}
+
+.mute-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 80px;
+    height: 8px;
+    background: #ddd;
+    border-radius: 4px;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s;
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border: none;
+    transition: all 0.2s;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.volume-slider::-moz-range-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Style pour le bouton d'achat de champ désactivé */
+#buy-field:disabled {
+    background: linear-gradient(135deg, #999, #777);
+    cursor: not-allowed;
+    opacity: 0.7;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Style pour les effets de croissance des plantes */
+.plant.growing {
+    animation: gentle-grow 2s infinite alternate ease-in-out;
+    filter: brightness(1.1) saturate(1.2);
+    transform-origin: bottom center;
+}
+
+.plant-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    height: 90%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(139, 195, 74, 0.2) 30%, transparent 70%);
+    animation: pulse-glow-growing 3s infinite alternate;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.growth-particle {
+    position: absolute;
+    bottom: 20%;
+    width: 4px;
+    height: 4px;
+    background-color: rgba(139, 195, 74, 0.7);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 3;
+    animation: float-particle 2.5s infinite ease-out;
+    opacity: 0;
+}
+
+.sun-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2em;
+    animation: sun-rotate 4s linear infinite;
+    filter: drop-shadow(0 0 5px rgba(255, 235, 59, 0.6));
+    z-index: 3;
+}
+
+.stage-change-flash {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 0%, transparent 70%);
+    border-radius: 15px;
+    animation: stage-flash 0.6s ease-out forwards;
+    z-index: 4;
+    pointer-events: none;
+}
+
+.growth-complete-flash {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(139, 195, 74, 0.4) 60%, transparent 100%);
+    border-radius: 15px;
+    animation: complete-flash 1s ease-out forwards;
+    z-index: 4;
+    pointer-events: none;
+}
+
+.plant.stage-change {
+    animation: pop-grow 0.5s ease-out;
+    filter: brightness(1.3) saturate(1.5);
+}
+
+@keyframes gentle-grow {
+    0% {
+        transform: translate(-50%, -45%) scale(1);
+    }
+    100% {
+        transform: translate(-50%, -55%) scale(1.05);
+    }
+}
+
+@keyframes pulse-glow-growing {
+    0% {
+        opacity: 0.4;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+    100% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+@keyframes float-particle {
+    0% {
+        transform: translateY(0) scale(0.8);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.9;
+    }
+    90% {
+        opacity: 0.7;
+    }
+    100% {
+        transform: translateY(-100px) scale(0);
+        opacity: 0;
+    }
+}
+
+@keyframes sun-rotate {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+    50% {
+        transform: rotate(180deg) scale(1.1);
+    }
+    100% {
+        transform: rotate(360deg) scale(1);
+    }
+}
+
+@keyframes stage-flash {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.3);
+    }
+}
+
+@keyframes complete-flash {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    40% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.5);
+    }
+}
+
+@keyframes pop-grow {
+    0% {
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* Styles spécifiques pour les parcelles en croissance */
+.plot[data-state="growing"] {
+    background: linear-gradient(45deg, #5D4037 0%, #795548 100%);
+    border-color: #33691E;
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+}
+
+/* Supprimer les anciens styles d'indicateur de croissance */
+.growth-indicator,
+.growth-icon,
+.growth-label,
+.growth-progress {
+    display: none;
+}
+
+/* Empêcher le défilement de la page pour le joueur */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+}
+
+/* Ajuster le conteneur principal pour s'adapter à la taille de l'écran sans défilement */
+.main-layout {
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ajuster la taille du conteneur de jeu pour qu'il s'adapte sans déborder */
+.game-container {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-height: calc(100vh - 180px); /* Tenir compte de l'en-tête et de la barre d'outils */
+}
+
+/* Media queries pour ajuster la taille du champ sur différents écrans */
+@media (min-width: 1400px) {
+    .field {
+        width: 360px;
+        height: 360px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .field {
+        width: 320px;
+        height: 320px;
+    }
+}
+
+/* Styles pour les effets visuels de plantation et d'arrosage */
+.planting-effect::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(139, 195, 74, 0.8) 0%, rgba(139, 195, 74, 0) 70%);
+    border-radius: 12px;
+    animation: planting-glow 0.8s ease-out forwards;
+    z-index: 5;
+    pointer-events: none;
+}
+
+@keyframes planting-glow {
+    0% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 0; transform: scale(1.5); }
+}
+
+.watering-effect::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(66, 165, 245, 0.8) 0%, rgba(66, 165, 245, 0) 70%);
+    border-radius: 12px;
+    animation: watering-glow 0.8s ease-out forwards;
+    z-index: 5;
+    pointer-events: none;
+}
+
+@keyframes watering-glow {
+    0% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 1; transform: scale(1.1); }
+    100% { opacity: 0; transform: scale(1.5); }
+}
+
+.watering-effect .plant {
+    animation: watering-shake 0.5s ease-out !important;
+}
+
+@keyframes watering-shake {
+    0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+    25% { transform: translate(-50%, -50%) rotate(-5deg); }
+    50% { transform: translate(-50%, -50%) rotate(0deg); }
+    75% { transform: translate(-50%, -50%) rotate(5deg); }
+}
+
+/* Renforcer l'animation de goutte d'eau */
+.water-indicator {
+    animation: bounce-enhanced 1s infinite alternate;
+    filter: drop-shadow(0 0 5px rgba(33, 150, 243, 0.8));
+    font-size: 1.8em !important;
+}
+
+@keyframes bounce-enhanced {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        transform: translateY(-8px) scale(1.2);
+    }
+}
+
+/* Styles pour le panneau d'informations des plantes */
+.plant-info-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 420px;
+    max-width: 90vw;
+    max-height: 85vh;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.plant-info-panel.show {
+    opacity: 1;
+    pointer-events: all;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.plant-info-header {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #8BC34A 0%, #4CAF50 100%);
+    color: white;
+    border-radius: 20px 20px 0 0;
+    position: relative;
+}
+
+.plant-emoji {
+    font-size: 2.2em;
+    margin-right: 15px;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+}
+
+.plant-name {
+    font-size: 1.6em;
+    margin: 0;
+    flex-grow: 1;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.close-panel {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2em;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    box-shadow: none;
+}
+
+.close-panel:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
+}
+
+.plant-info-content {
+    padding: 20px;
+    padding-bottom: 40px;
+    max-height: calc(85vh - 60px);
+    overflow-y: auto;
+    background-color: white;
+    color: #333;
+}
+
+.plant-info-section {
+    margin-bottom: 25px;
+}
+
+.plant-info-section h4 {
+    color: #2E7D32;
+    font-size: 1.25em;
+    margin: 0 0 15px 0;
+    position: relative;
+    padding-bottom: 8px;
+}
+
+.plant-info-section h4::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, #8BC34A, #4CAF50);
+    border-radius: 1.5px;
+}
+
+.plant-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    background: white;
+    border-radius: 12px;
+    transition: all 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.info-item:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.info-icon {
+    font-size: 1.5em;
+    margin-bottom: 5px;
+}
+
+.info-label {
+    font-size: 0.9em;
+    color: #616161;
+    margin-bottom: 3px;
+}
+
+.info-value {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #2E7D32;
+}
+
+.growth-stages {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+    padding: 15px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.stage-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.stage-item:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8BC34A;
+    font-size: 1.2em;
+}
+
+.stage-emoji {
+    font-size: 2em;
+    margin-bottom: 5px;
+}
+
+.stage-label {
+    font-size: 0.8em;
+    color: #616161;
+}
+
+.tool-impact {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 20px;
+}
+
+.tool-impact-item {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.tool-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
+}
+
+.impact-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.impact-label {
+    font-size: 0.9em;
+    color: #616161;
+}
+
+.impact-value {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #2E7D32;
+}
+
+.impact-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(240, 240, 240, 0.8);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 5px 0;
+}
+
+.impact-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #8BC34A, #4CAF50);
+    width: 0;
+    transition: width 0.5s ease;
+}
+
+.impact-progress.watering-progress {
+    background: linear-gradient(90deg, #03A9F4, #0288D1);
+}
+
+.impact-next {
+    align-self: flex-end;
+    font-size: 0.9em;
+    color: #616161;
+    margin-bottom: 10px;
+}
+
+/* Keyframe pour l'animation d'un élément qui pulse */
+@keyframes pulse-element {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.highlight-profit {
+    color: #D32F2F !important;
+    font-weight: bold;
+    animation: pulse-element 1s infinite;
+}
+
+/* Bouton d'information sur les graines */
+.seed-info-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, #4CAF50, #8BC34A);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: white;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    opacity: 0.8;
+    z-index: 5;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    font-style: italic;
+}
+
+.seed-info-button:hover {
+    background: linear-gradient(135deg, #43A047, #7CB342);
+    transform: scale(1.2) rotate(5deg);
+    opacity: 1;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Adaptation de l'élément seed-item pour positionner le bouton d'information */
+.seed-item {
+    position: relative; /* S'assurer que c'est en position relative pour le positionnement absolu du bouton */
+}
+
+/* Style pour la meilleure graine (la plus rentable) */
+.seed-item.best-seed {
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    position: relative;
+    z-index: 2;
+}
+
+.seed-item.best-seed::before {
+    content: '';
+    display: none;
+}
+
+/* Animation ajoutée pour les commentaires au survol */
+.plant-info-section p:hover,
+.tool-impact-item .impact-label:hover,
+.tool-impact-item .impact-value:hover,
+.impact-next:hover {
+    transform: scale(1.05);
+    color: #1b5e20;
+    transition: all 0.2s ease;
+    cursor: default;
+}
+
+/* Amélioration des animations sur tous les labels et valeurs du panneau d'info */
+.plant-info-section span,
+.plant-info-section p,
+.info-value,
+.info-label,
+.impact-label,
+.impact-value,
+.impact-next,
+.stage-label {
+    transition: all 0.2s ease;
+}
+
+.plant-info-section span:hover,
+.plant-info-section p:hover,
+.info-value:hover,
+.info-label:hover,
+.impact-label:hover,
+.impact-value:hover,
+.impact-next:hover,
+.stage-label:hover {
+    transform: scale(1.1);
+    color: #1b5e20;
+    cursor: default;
+}
+
+/* Animation de pulsation au survol des graines */
+@keyframes seed-hover-pulse {
+    0% {
+        transform: scale(1.08) rotate(3deg);
+    }
+    100% {
+        transform: scale(1.15) rotate(7deg);
+    }
+}
+
+/* Animation de base pour toutes les graines */
+.seed,
+body .seed,
+.seeds-group .seed,
+.seed-item .seed {
+    font-size: 2em !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
+    cursor: grab !important;
+    filter: drop-shadow(0 0 5px rgba(76, 175, 80, 0.3)) !important;
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+/* Animation spécifique pour le maïs (améliorée) */
+.seed.corn:hover,
+body .seed.corn:hover {
+    transform: scale(1.2) rotate(10deg) !important;
+    filter: drop-shadow(0 0 12px rgba(255, 193, 7, 0.8)) brightness(1.3) !important;
+    animation: corn-hover-bounce 0.6s infinite alternate cubic-bezier(0.18, 0.89, 0.32, 1.5) !important;
+}
+
+@keyframes corn-hover-bounce {
+    0% {
+        transform: scale(1.1) rotate(5deg) translateY(0);
+    }
+    100% {
+        transform: scale(1.2) rotate(12deg) translateY(-8px);
+    }
+}
+
+/* Personnalisation des animations pour chaque type de graine */
+/* Effet spécial pour les radis */
+.seed.radish:hover,
+body .seed.radish:hover {
+    transform: scale(1.15) rotate(-5deg) !important;
+    filter: drop-shadow(0 0 12px rgba(233, 30, 99, 0.7)) brightness(1.2) !important;
+    animation: radish-hover 0.7s infinite alternate cubic-bezier(0.18, 0.89, 0.32, 1.28) !important;
+}
+
+@keyframes radish-hover {
+    0% {
+        transform: scale(1.1) rotate(-3deg);
+    }
+    100% {
+        transform: scale(1.15) rotate(-8deg);
+    }
+}
+
+/* Effet spécial pour les carottes */
+.seed.carrot:hover,
+body .seed.carrot:hover {
+    transform: scale(1.15) rotate(0deg) !important;
+    filter: drop-shadow(0 0 12px rgba(255, 152, 0, 0.7)) brightness(1.2) !important;
+    animation: carrot-hover 0.7s infinite alternate cubic-bezier(0.18, 0.89, 0.32, 1.28) !important;
+}
+
+@keyframes carrot-hover {
+    0% {
+        transform: scale(1.1) translateY(0);
+    }
+    100% {
+        transform: scale(1.15) translateY(-5px);
+    }
+}
+
+/* Effet spécial pour les tomates */
+.seed.tomato:hover,
+body .seed.tomato:hover {
+    transform: scale(1.15) rotate(5deg) !important;
+    filter: drop-shadow(0 0 12px rgba(244, 67, 54, 0.7)) brightness(1.2) !important;
+    animation: tomato-hover 0.8s infinite alternate cubic-bezier(0.18, 0.89, 0.32, 1.28) !important;
+}
+
+@keyframes tomato-hover {
+    0% {
+        transform: scale(1.1) rotate(3deg);
+    }
+    100% {
+        transform: scale(1.2) rotate(8deg) translateY(-3px);
+    }
+}
+
+/* Effet spécial pour les pommes de terre */
+.seed.potato:hover,
+body .seed.potato:hover {
+    transform: scale(1.15) rotate(-3deg) !important;
+    filter: drop-shadow(0 0 12px rgba(121, 85, 72, 0.7)) brightness(1.2) !important;
+    animation: potato-hover 0.9s infinite alternate cubic-bezier(0.18, 0.89, 0.32, 1.28) !important;
+}
+
+@keyframes potato-hover {
+    0% {
+        transform: scale(1.1) rotate(-2deg) translateY(0);
+    }
+    100% {
+        transform: scale(1.15) rotate(-5deg) translateY(-3px);
+    }
+}
+
+/* Effet spécial pour l'herbe basique */
+.seed.basic:hover,
+body .seed.basic:hover {
+    transform: scale(1.15) !important;
+    filter: drop-shadow(0 0 12px rgba(76, 175, 80, 0.7)) brightness(1.2) !important;
+    animation: basic-hover 0.6s infinite alternate cubic-bezier(0.18, 0.89, 0.32, 1.28) !important;
+}
+
+@keyframes basic-hover {
+    0% {
+        transform: scale(1.1) translateY(0);
+    }
+    100% {
+        transform: scale(1.15) translateY(-4px);
+    }
+}
+
+/* Animation spéciale pour la citrouille */
+.seed.pumpkin:hover,
+body .seed.pumpkin:hover {
+    transform: scale(1.15) rotate(8deg) !important;
+    filter: drop-shadow(0 0 12px rgba(255, 165, 0, 0.7)) brightness(1.2) !important;
+    animation: pumpkin-hover 0.8s infinite alternate cubic-bezier(0.18, 0.89, 0.32, 1.28) !important;
+}
+
+@keyframes pumpkin-hover {
+    0% {
+        transform: scale(1.1) rotate(3deg);
+    }
+    100% {
+        transform: scale(1.2) rotate(10deg);
+    }
+}
+
+/* Animation spéciale pour l'aubergine */
+.seed.eggplant:hover,
+body .seed.eggplant:hover {
+    transform: scale(1.15) rotate(-5deg) !important;
+    filter: drop-shadow(0 0 12px rgba(147, 112, 219, 0.8)) brightness(1.2) !important;
+    animation: eggplant-hover 0.8s infinite alternate cubic-bezier(0.18, 0.89, 0.32, 1.28) !important;
+}
+
+@keyframes eggplant-hover {
+    0% {
+        transform: scale(1.1) rotate(-3deg);
+    }
+    100% {
+        transform: scale(1.2) rotate(-8deg) translateY(-4px);
+    }
+}
+
+.plant-info-section:last-child {
+    margin-bottom: 15px;
+}
+
+.tool-impact-item:last-child {
+    margin-bottom: 15px;
+}
+
+/* Styles pour les nouveaux outils */
+.tool-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    margin: 0 15px;
+}
+
+.tool-name {
+    font-size: 0.9em;
+    color: #2E7D32;
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+.tool-cost {
+    font-size: 0.8em;
+    color: #e65100;
+    font-weight: bold;
+    margin-top: 2px;
+}
+
+.tool-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #4CAF50;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7em;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.tool-unavailable {
+    opacity: 0.5;
+    filter: grayscale(0.6);
+    cursor: not-allowed !important;
+}
+
+/* Effet visuel pour fertilisant */
+.fertilizer-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(152, 251, 152, 0.7) 0%, rgba(107, 142, 35, 0.3) 70%);
+    border-radius: 15px;
+    animation: fertilizer-glow 1.5s ease-out forwards;
+    z-index: 4;
+    pointer-events: none;
+}
+
+@keyframes fertilizer-glow {
+    0% { opacity: 0; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.1); }
+    100% { opacity: 0; transform: scale(1.3); }
+}
+
+/* Effet visuel pour récolte avec fertilisant */
+.fertilizer-harvest-effect {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(152, 251, 152, 0.9);
+    color: #006400;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 0.9em;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    animation: bonus-float 1.5s ease-out forwards;
+    z-index: 10;
+}
+
+@keyframes bonus-float {
+    0% { opacity: 0; transform: translateX(-50%) translateY(0) scale(0.8); }
+    20% { opacity: 1; transform: translateX(-50%) translateY(-5px) scale(1.1); }
+    80% { opacity: 1; transform: translateX(-50%) translateY(-20px) scale(1); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-30px) scale(0.8); }
+}
+
+/* Effet visuel pour désherbeur */
+.weed-cutter-effect {
+    position: relative;
+}
+
+.weed-cutter-effect::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(121, 85, 72, 0.8) 0%, rgba(62, 39, 35, 0.4) 100%);
+    border-radius: 15px;
+    animation: weed-cutter 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    z-index: 4;
+    pointer-events: none;
+}
+
+@keyframes weed-cutter {
+    0% { 
+        clip-path: inset(0 100% 100% 0);
+        opacity: 1;
+    }
+    50% {
+        clip-path: inset(0 0 50% 0);
+        opacity: 0.8;
+    }
+    100% {
+        clip-path: inset(0 0 0 0);
+        opacity: 0;
+    }
+}
+
+/* Indiquer que la parcelle est fertilisée */
+.plot[data-fertilized="true"]::before {
+    content: '🌿';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1em;
+    z-index: 3;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+    animation: fertilized-indicator 2s infinite alternate ease-in-out;
+}
+
+@keyframes fertilized-indicator {
+    0% { transform: scale(0.9); opacity: 0.7; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+/* Notification de changement de journée */
+.daily-reset-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background: linear-gradient(135deg, #FFB300 0%, #FF9800 100%);
+    color: white;
+    padding: 20px 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1200;
+}
+
+.daily-reset-notification.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.daily-reset-notification h3 {
+    font-size: 1.6em;
+    margin: 0 0 10px 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.daily-reset-notification p {
+    font-size: 1.1em;
+    margin: 10px 0 0 0;
+}
+
+/* Effet visuel pour l'arroseur automatique */
+.auto-water-effect {
+    position: relative;
+    overflow: hidden;
+}
+
+.auto-water-effect::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(66, 165, 245, 0.6) 0%, transparent 70%);
+    border-radius: 15px;
+    animation: auto-water-animation 0.8s ease-out forwards;
+    z-index: 2;
+    pointer-events: none;
+}
+
+@keyframes auto-water-animation {
+    0% { 
+        opacity: 0.8;
+        transform: scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.2);
+    }
+}
+
+.auto-water-effect .plant {
+    animation: shake-water 0.8s ease-in-out;
+}
+
+@keyframes shake-water {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-2px) rotate(-2deg); }
+    40% { transform: translateX(2px) rotate(2deg); }
+    60% { transform: translateX(-2px) rotate(-1deg); }
+    80% { transform: translateX(2px) rotate(1deg); }
+}
+
+.plant-info-panel::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1; /* Placé derrière le panneau */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.plant-info-panel.show::before {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.upgrade-button.cannot-afford {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: linear-gradient(135deg, #999 0%, #666 100%) !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+/* Ajout des styles pour les boutons d'expansion et les graines */
+.expansion-button.cannot-afford {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: linear-gradient(135deg, #999 0%, #666 100%) !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.seed.cannot-afford {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(0.8) !important;
+    animation: none !important;
+}
+
+.seed-item .cannot-afford {
+    pointer-events: none;
+}
+
+/* Styles pour le leaderboard */
+.leaderboard-container {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 15px;
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.leaderboard-container p {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+}
+
+.leaderboard-container p:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.02);
+}
+
+.leaderboard-container p.current-score {
+    background-color: rgba(255, 215, 0, 0.3);
+    border: 1px solid rgba(255, 215, 0, 0.7);
+    font-weight: bold;
+}
+
+.leaderboard-container p:first-child {
+    margin-top: 5px;
+}
+
+.leaderboard-container p:last-child {
+    margin-bottom: 5px;
+}
+
+.game-over h4 {
+    color: #ffffff;
+    font-size: 1.3em;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Styles pour le modal de nom du joueur */
+.name-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+}
+
+.name-modal-content {
+    background-color: #f9f9e0;
+    border-radius: 10px;
+    padding: 30px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    border: 3px solid #8bc24a;
+}
+
+.name-modal h2 {
+    color: #5a9216;
+    margin-top: 0;
+    font-size: 1.8em;
+}
+
+.name-modal p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+#player-name-input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+    font-family: 'Nunito', sans-serif;
+    box-sizing: border-box;
+}
+
+#player-name-input:focus {
+    outline: none;
+    border-color: #8bc24a;
+    box-shadow: 0 0 5px rgba(139, 194, 74, 0.5);
+}
+
+#save-name-button {
+    background-color: #8bc24a;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#save-name-button:hover {
+    background-color: #71a32c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#save-name-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles pour le modal de classement */
+.leaderboard-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+}
+
+.leaderboard-modal.show {
+    display: flex;
+}
+
+.leaderboard-modal-content {
+    background-color: #f9f9e0;
+    border-radius: 10px;
+    padding: 30px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    border: 3px solid #8bc24a;
+    position: relative;
+    z-index: 10001;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.leaderboard-modal h2 {
+    color: #5a9216;
+    margin-top: 0;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+}
+
+.close-leaderboard {
+    background-color: #8bc24a;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.2s ease;
+}
+
+.close-leaderboard:hover {
+    background-color: #71a32c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.close-leaderboard:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.leaderboard-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.stat-item.leaderboard-button {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.stat-item.leaderboard-button:hover {
+    transform: translateY(-2px);
+}
+
+/* Styles pour le tableau de classement dans le modal */
+.leaderboard-container.full-view {
+    margin-top: 0;
+    max-width: 100%;
+    background-color: transparent;
+    padding: 0;
+}
+
+.leaderboard-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background-color: rgba(139, 194, 74, 0.2);
+    border-radius: 5px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #8bc24a;
+}
+
+.leaderboard-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 15px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 5px;
+    margin: 8px 0;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.leaderboard-row:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    background-color: #8bc24a;
+}
+
+.rank-badge.rank-1 {
+    background-color: #ffd700; /* Or */
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    font-size: 1.2em;
+}
+
+.rank-badge.rank-2 {
+    background-color: #c0c0c0; /* Argent */
+    box-shadow: 0 0 8px rgba(192, 192, 192, 0.6);
+    font-size: 1.1em;
+}
+
+.rank-badge.rank-3 {
+    background-color: #cd7f32; /* Bronze */
+    box-shadow: 0 0 6px rgba(205, 127, 50, 0.6);
+    font-size: 1.05em;
+}
+
+.leaderboard-header span, 
+.leaderboard-row span {
+    flex: 1;
+    text-align: center;
+}
+
+.leaderboard-header span:first-child,
+.leaderboard-row span:first-child {
+    flex: 0.5;
+    text-align: center;
+}
+
+.leaderboard-header span:nth-child(2),
+.leaderboard-row span:nth-child(2) {
+    flex: 2;
+    text-align: left;
+}

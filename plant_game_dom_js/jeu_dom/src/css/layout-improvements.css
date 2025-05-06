@@ -1,0 +1,363 @@
+/* Améliorations de la disposition du jeu Garden Simulator */
+
+/* Animation essentielle */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Structure principale */
+.game-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    gap: 20px;
+    animation: fadeIn 0.6s ease-out;
+    min-height: 100vh;
+    padding-bottom: 110px;
+}
+
+.game-header {
+    width: 100%;
+    padding: 10px 0;
+}
+
+.game-content {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 20px;
+    min-height: 600px;
+    margin-bottom: 0;
+    max-height: calc(100vh - 120px);
+    overflow: visible;
+}
+
+/* Panneaux latéraux */
+.side-panel {
+    background-color: rgba(205, 134, 85, 0.9);
+    border: 4px solid rgba(156, 89, 52, 0.95);
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 300px;
+    max-height: calc(80vh - 120px);
+    animation: fadeIn 0.6s ease-out;
+    margin-top: -35px;
+    position: relative;
+    z-index: 500;
+}
+
+.side-panel:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.market-panel {
+    background-color: #CD8655;
+    border: 4px solid #9C5934;
+    animation-delay: 0.1s;
+}
+
+.upgrades-panel {
+    background-color: #CD8655;
+    border: 4px solid #9C5934;
+    animation-delay: 0.3s;
+}
+
+.panel-header {
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.panel-header h3 {
+    margin: 0;
+    text-align: center;
+    font-size: 1.4rem;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Container de défilement */
+.scroll-container {
+    overflow-y: auto;
+    height: 100%;
+    padding: 15px;
+    position: relative;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+/* Items des graines */
+.seed-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #F7D29B;
+    border: 1px solid #E19C4F;
+    border-radius: 12px;
+    padding: 8px 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+    animation: fadeIn 0.5s ease-out forwards;
+    transform: translateY(20px);
+    opacity: 0;
+}
+
+.seed-item p {
+    margin: 5px 0 0 0;
+    font-size: 11px;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.seed-item:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+    background-color: #FFE0B2;
+}
+
+.seed {
+    font-size: 2rem;
+    filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.2));
+}
+
+/* Zone centrale du champ */
+.field-container {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px;
+    min-height: 500px;
+    scroll-behavior: smooth;
+    mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+    background-color: #8BC349;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    margin-top: -15px;
+}
+
+/* Grille des champs */
+.field {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 0 auto;
+    width: 85%;
+    max-width: 520px;
+    min-height: auto;
+    padding-bottom: 120px !important;
+    margin-bottom: 100px !important;
+    transition: all 0.5s ease;
+    background: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.field.expanded {
+    gap: 12px;
+    width: 90%;
+    margin-bottom: 20px;
+    background: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.plot {
+    background-color: #614126;
+    border: 3px solid #4D331E;
+    border-radius: 10px;
+    aspect-ratio: 1/1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    position: relative;
+    cursor: pointer;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.5s ease-out forwards;
+    opacity: 0;
+    max-height: 120px;
+}
+
+.plot:nth-child(1) { animation-delay: 0.1s; }
+.plot:nth-child(2) { animation-delay: 0.15s; }
+.plot:nth-child(3) { animation-delay: 0.2s; }
+.plot:nth-child(4) { animation-delay: 0.25s; }
+.plot:nth-child(5) { animation-delay: 0.3s; }
+.plot:nth-child(6) { animation-delay: 0.35s; }
+.plot:nth-child(7) { animation-delay: 0.4s; }
+.plot:nth-child(8) { animation-delay: 0.45s; }
+.plot:nth-child(9) { animation-delay: 0.5s; }
+
+.plot:hover {
+    transform: scale(1.03);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), inset 0 0 10px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Barre d'outils */
+.tools-container {
+    width: 100%;
+    max-width: 100%;
+    pointer-events: auto;
+    transform: none;
+}
+
+.tools {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 5px;
+}
+
+.tools h3 {
+    margin: 0 10px 0 0;
+    text-align: center;
+    color: white;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.tools-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 2px;
+}
+
+.tool-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    transition: transform 0.2s ease;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 8px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.tool {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    cursor: pointer;
+    filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.2));
+    transition: transform 0.2s ease;
+}
+
+.tool-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Statistiques */
+.stats-container {
+    background-color: #F7D29B;
+    border: 2px solid #E19C4F;
+    border-radius: 25px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    margin-bottom: 20px;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    position: relative;
+    z-index: 10;
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Media queries */
+@media (max-width: 1200px) {
+    .game-content {
+        grid-template-columns: 1fr 2fr;
+        grid-template-areas: 
+            "market field"
+            "upgrades field";
+        max-height: none;
+    }
+    
+    .market-panel { grid-area: market; }
+    .field-container { 
+        grid-area: field;
+        grid-row: span 2;
+        max-height: 90vh;
+    }
+    .upgrades-panel { grid-area: upgrades; }
+    .field { padding-bottom: 85px; }
+}
+
+@media (max-width: 768px) {
+    .game-content {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "field"
+            "market"
+            "upgrades";
+        gap: 15px;
+    }
+    
+    .field-container {
+        grid-row: auto;
+        max-height: 80vh;
+        min-height: 500px;
+    }
+    
+    .field { width: 95%; padding-bottom: 80px; }
+    .plot { max-height: 110px; }
+}
+
+@media (max-height: 700px) {
+    .field-container {
+        gap: 15px;
+        min-height: 550px;
+        max-height: 80vh;
+        padding: 15px;
+    }
+    
+    .field { padding-bottom: 85px; gap: 8px; }
+    .plot { max-height: 110px; border-radius: 8px; }
+    .tools-container { padding: 5px 10px; bottom: 8px; }
+    .tools h3 { font-size: 0.9rem; }
+    .tool { width: 38px; height: 38px; }
+    .tool-item { padding: 4px 8px; gap: 3px; }
+    .tool-name { font-size: 0.8rem; }
+}
+
+/* Aide */
+.help-button {
+    z-index: 10000 !important;
+    bottom: 80px !important;
+    right: 20px !important;
+} 

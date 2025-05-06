@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baby Games Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Animated Background Shapes -->
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+
+    <header>
+        <h1>Baby Games Hub</h1>
+    </header>
+
+    <main>
+        <section>
+            <h2 class="section-title">Choisis ton aventure</h2>
+            <div class="games-container">
+                <div class="game-card">
+                    <div class="game-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h2>Plant Game</h2>
+                    <p>Fais prospérer ton empire jardinier ! Plante des graines, récolte tes cultures et deviens le jardinier ultime dans ce jeu de simulation captivant.</p>
+                    <a href="plant_game_dom_js/jeu_dom/index.html" class="game-button">Play Now</a>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-icon">
+                        <i class="fas fa-globe-americas"></i>
+                    </div>
+                    <h2>GeoQuizz</h2>
+                    <p>Teste tes connaissances en géographie ! Identifie des monuments, des pays et des régions dans ce quiz ludique et instructif.</p>
+                    <a href="geoquizz_canva_js/index.html" class="game-button">Play Now</a>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-icon">
+                        <i class="fas fa-meteor"></i>
+                    </div>
+                    <h2>DreamFall</h2>
+                    <p>Pars pour une aventure épique à travers un paysage onirique surréaliste. Résous des énigmes, surmonte des obstacles et découvre les secrets de tes rêves.</p>
+                    <a href="https://test-game-ten.vercel.app" class="game-button">Play Now</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="scoreboards-container">
+            <div class="scoreboard-section">
+                <h2 class="section-title">Plant Game Leaderboard</h2>
+                <p class="section-description">Les meilleurs jardiniers et leurs empires florissants !</p>
+                
+                <table class="scoreboard" id="plant-game-scoreboard">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Player</th>
+                            <th>Score</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4" class="loading-data">Loading scores...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="scoreboard-section">
+                <h2 class="section-title">GeoQuizz Leaderboard</h2>
+                <p class="section-description">Les maîtres de la géographie qui connaissent le monde sur le bout des doigts !</p>
+                
+                <table class="scoreboard" id="geoquizz-scoreboard">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Player</th>
+                            <th>Score</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4" class="loading-data">Loading scores...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Lance-toi un défi avec notre collection de jeux amusants et éducatifs ! Suis tes progrès et défie tes amis.
+        </p>
+        <p>&copy; 2025 Baby Games Hub</p>
+    </footer>
+
+    <script>
+        // Add animation when scrolling into view
+        document.addEventListener('DOMContentLoaded', function() {
+            const gameCards = document.querySelectorAll('.game-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            gameCards.forEach(card => {
+                card.style.opacity = 0;
+                card.style.transform = 'translateY(50px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+
+            // Load Plant Game Leaderboard
+            loadPlantGameLeaderboard();
+            
+            // Load GeoQuizz Leaderboard
+            loadGeoQuizzLeaderboard();
+        });
+
+        // Function to load Plant Game Leaderboard from localStorage
+        function loadPlantGameLeaderboard() {
+            const scoreboardElement = document.getElementById('plant-game-scoreboard').querySelector('tbody');
+            let leaderboard = [];
+            
+            try {
+                // Retrieve Plant Game leaderboard data from localStorage
+                leaderboard = JSON.parse(localStorage.getItem('gardenSimulatorLeaderboard')) || [];
+                
+                if (leaderboard.length === 0) {
+                    scoreboardElement.innerHTML = '<tr><td colspan="4" class="no-data">No scores yet. Be the first to play!</td></tr>';
+                    return;
+                }
+                
+                // Sort by score (highest first)
+                leaderboard.sort((a, b) => b.score - a.score);
+                
+                // Limit to top 7 scores
+                const topScores = leaderboard.slice(0, 7);
+                
+                let tableHtml = '';
+                topScores.forEach((entry, index) => {
+                    const date = new Date(entry.date);
+                    const formattedDate = date.toLocaleDateString();
+                    const rankClass = index < 3 ? `rank-${index + 1}` : '';
+                    
+                    tableHtml += `
+                        <tr class="${rankClass}">
+                            <td>${index + 1}</td>
+                            <td>${entry.playerName || 'Anonymous'}</td>
+                            <td>${entry.score} 🪙</td>
+                            <td>${formattedDate}</td>
+                        </tr>
+                    `;
+                });
+                
+                scoreboardElement.innerHTML = tableHtml;
+            } catch (error) {
+                console.error('Error loading Plant Game leaderboard:', error);
+                scoreboardElement.innerHTML = '<tr><td colspan="4" class="error-data">Error loading scores</td></tr>';
+            }
+        }
+
+        // Function to load GeoQuizz Leaderboard from localStorage
+        function loadGeoQuizzLeaderboard() {
+            const scoreboardElement = document.getElementById('geoquizz-scoreboard').querySelector('tbody');
+            let leaderboard = [];
+            
+            try {
+                // Retrieve GeoQuizz leaderboard data from localStorage
+                leaderboard = JSON.parse(localStorage.getItem('findPlaceHighScores')) || [];
+                
+                if (leaderboard.length === 0) {
+                    scoreboardElement.innerHTML = '<tr><td colspan="4" class="no-data">No scores yet. Be the first to play!</td></tr>';
+                    return;
+                }
+                
+                // Sort by score (highest first)
+                leaderboard.sort((a, b) => b.score - a.score);
+                
+                // Limit to top 7 scores
+                const topScores = leaderboard.slice(0, 7);
+                
+                let tableHtml = '';
+                topScores.forEach((entry, index) => {
+                    const date = new Date(entry.date);
+                    const formattedDate = date.toLocaleDateString();
+                    const rankClass = index < 3 ? `rank-${index + 1}` : '';
+                    
+                    tableHtml += `
+                        <tr class="${rankClass}">
+                            <td>${index + 1}</td>
+                            <td>${entry.ign || 'Anonymous'}</td>
+                            <td>${entry.score}</td>
+                            <td>${formattedDate}</td>
+                        </tr>
+                    `;
+                });
+                
+                scoreboardElement.innerHTML = tableHtml;
+            } catch (error) {
+                console.error('Error loading GeoQuizz leaderboard:', error);
+                scoreboardElement.innerHTML = '<tr><td colspan="4" class="error-data">Error loading scores</td></tr>';
+            }
+        }
+    </script>
+</body>
+</html>

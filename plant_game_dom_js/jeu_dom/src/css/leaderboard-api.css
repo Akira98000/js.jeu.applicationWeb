@@ -1,0 +1,98 @@
+/**
+ * Styles pour l'API de classement Garden Simulator
+ * À inclure sur les sites externes qui utilisent l'API
+ */
+
+.garden-sim-leaderboard {
+    font-family: 'Nunito', sans-serif;
+    background-color: #f9f9e0;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 2px solid #8bc24a;
+}
+
+.garden-sim-leaderboard h3 {
+    color: #5a9216;
+    text-align: center;
+    font-size: 1.3em;
+    margin-top: 0;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0a0;
+}
+
+.garden-sim-leaderboard .leaderboard-entry {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    margin: 6px 0;
+    background-color: #ffffff;
+    border-radius: 6px;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.garden-sim-leaderboard .leaderboard-entry:hover {
+    transform: translateY(-2px);
+    background-color: #f0f8e5;
+}
+
+.garden-sim-leaderboard .rank {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #8bc24a;
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    margin-right: 12px;
+}
+
+.garden-sim-leaderboard .leaderboard-entry:nth-child(2) .rank {
+    background-color: #f9a825; /* Or */
+}
+
+.garden-sim-leaderboard .leaderboard-entry:nth-child(3) .rank {
+    background-color: #9e9e9e; /* Argent */
+}
+
+.garden-sim-leaderboard .leaderboard-entry:nth-child(4) .rank {
+    background-color: #cd7f32; /* Bronze */
+}
+
+.garden-sim-leaderboard .player-name {
+    flex-grow: 1;
+    font-weight: 600;
+    color: #333;
+}
+
+.garden-sim-leaderboard .score {
+    font-weight: bold;
+    color: #f9a825;
+    margin: 0 10px;
+}
+
+.garden-sim-leaderboard .date {
+    color: #999;
+    font-size: 0.9em;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+    .garden-sim-leaderboard {
+        max-width: 95%;
+        padding: 10px;
+    }
+    
+    .garden-sim-leaderboard .date {
+        display: none;
+    }
+    
+    .garden-sim-leaderboard .leaderboard-entry {
+        padding: 6px 8px;
+    }
+} 

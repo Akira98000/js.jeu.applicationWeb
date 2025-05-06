@@ -1,0 +1,49 @@
+{
+  "places": [
+    {
+      "name": "Taj Mahal",
+      "description": "Iconic marble mausoleum in Agra, India",
+      "image": "images/tajmahal.webp",
+      "coordinates": {
+        "x": 1409.4367211555839,
+        "y": 331.91864937928386
+      }
+    },
+    {
+      "name": "Eiffel Tower",
+      "description": "Iconic wrought-iron lattice tower in Paris, France",
+      "image": "images/eiffeltower.webp",
+      "coordinates": {
+        "x": 998.8691858068164,
+        "y": 192.883803801736
+      }
+    },
+    {
+      "name": "Great Wall of China",
+      "description": "Ancient defensive wall spanning northern China",
+      "image": "images/greatwall.webp",
+      "coordinates": {
+        "x": 1603.6901406603859,
+        "y": 235.38510344905674
+      }
+    },
+    {
+      "name": "Machu Picchu",
+      "description": "15th-century Inca citadel in southern Peru",
+      "image": "images/machupicchu.webp",
+      "coordinates": {
+        "x": 580.6128702951868,
+        "y": 586.606778596509
+      }
+    },
+    {
+      "name": "Sydney Opera House",
+      "description": "Performing arts center in Sydney, Australia",
+      "image": "images/sydneyopera.webp",
+      "coordinates": {
+        "x": 1793.8673882330743,
+        "y": 719.5726032812624
+      }
+    }
+  ]
+}

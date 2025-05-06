@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemple d'utilisation du Classement Garden Simulator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./src/css/leaderboard-api.css">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #4caf50;
+            text-align: center;
+        }
+        
+        .demo-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        
+        .code-snippet {
+            margin: 20px 0;
+        }
+        
+        .button {
+            display: inline-block;
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        
+        .button:hover {
+            background-color: #388e3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Exemple d'utilisation de l'API de classement</h1>
+        
+        <div class="demo-section">
+            <h2>Classement Garden Simulator</h2>
+            <p>Cette section affiche automatiquement les meilleurs scores de Garden Simulator:</p>
+            
+            <!-- L'élément où le classement sera affiché -->
+            <div id="leaderboard-container"></div>
+            
+            <div class="code-snippet">
+                <h3>Code utilisé:</h3>
+                <pre>&lt;!-- Inclure les ressources nécessaires --&gt;
+&lt;link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"&gt;
+&lt;link rel="stylesheet" href="./path/to/leaderboard-api.css"&gt;
+&lt;script src="./path/to/leaderboard-api.js"&gt;&lt;/script&gt;
+
+&lt;!-- Élément pour afficher le classement --&gt;
+&lt;div id="leaderboard-container"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+    // Afficher le classement avec 5 meilleurs scores
+    GardenSimulatorLeaderboard.displayLeaderboard('leaderboard-container', 5);
+&lt;/script&gt;</pre>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>Utiliser uniquement le meilleur score</h2>
+            <p>Si vous ne voulez afficher que le meilleur score:</p>
+            
+            <div id="best-score-container"></div>
+            
+            <div class="code-snippet">
+                <h3>Code utilisé:</h3>
+                <pre>&lt;script&gt;
+    const bestScore = GardenSimulatorLeaderboard.getBestScore();
+    const container = document.getElementById('best-score-container');
+    
+    if (bestScore) {
+        container.innerHTML = `
+            &lt;div class="garden-sim-leaderboard"&gt;
+                &lt;h3&gt;🏆 Meilleur score Garden Simulator&lt;/h3&gt;
+                &lt;div class="leaderboard-entry"&gt;
+                    &lt;span class="rank"&gt;1&lt;/span&gt;
+                    &lt;span class="player-name"&gt;${bestScore.playerName}&lt;/span&gt;
+                    &lt;span class="score"&gt;${bestScore.score} 🪙&lt;/span&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        `;
+    } else {
+        container.innerHTML = '&lt;p&gt;Aucun score enregistré&lt;/p&gt;';
+    }
+&lt;/script&gt;</pre>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>Personnaliser l'affichage</h2>
+            <p>Vous pouvez utiliser les données brutes pour créer votre propre affichage:</p>
+            
+            <div id="custom-leaderboard"></div>
+            
+            <div class="code-snippet">
+                <h3>Code utilisé:</h3>
+                <pre>&lt;script&gt;
+    const scores = GardenSimulatorLeaderboard.getTopScores(3);
+    const container = document.getElementById('custom-leaderboard');
+    
+    if (scores.length > 0) {
+        let html = '&lt;div style="background-color: #f0f0f0; padding: 15px; border-radius: 5px;"&gt;';
+        html += '&lt;h3 style="color: #333;"&gt;Scores Garden Simulator&lt;/h3&gt;';
+        
+        scores.forEach((entry, index) => {
+            html += `
+                &lt;div style="display: flex; margin: 10px 0; align-items: center;"&gt;
+                    &lt;span style="font-weight: bold; margin-right: 10px;"&gt;#${index + 1}&lt;/span&gt;
+                    &lt;span&gt;${entry.playerName}&lt;/span&gt;
+                    &lt;span style="margin-left: auto; font-weight: bold;"&gt;${entry.score} 🪙&lt;/span&gt;
+                &lt;/div&gt;
+            `;
+        });
+        
+        html += '&lt;/div&gt;';
+        container.innerHTML = html;
+    } else {
+        container.innerHTML = '&lt;p&gt;Aucun score enregistré&lt;/p&gt;';
+    }
+&lt;/script&gt;</pre>
+            </div>
+        </div>
+        
+        <a href="index.html" class="button">Retour au jeu</a>
+    </div>
+    
+    <!-- Inclure l'API de classement -->
+    <script src="./src/js/leaderboard-api.js"></script>
+    
+    <script>
+        // Afficher le classement avec 5 meilleurs scores
+        GardenSimulatorLeaderboard.displayLeaderboard('leaderboard-container', 5);
+        
+        // Afficher uniquement le meilleur score
+        const bestScore = GardenSimulatorLeaderboard.getBestScore();
+        const bestScoreContainer = document.getElementById('best-score-container');
+        
+        if (bestScore) {
+            bestScoreContainer.innerHTML = `
+                <div class="garden-sim-leaderboard">
+                    <h3>🏆 Meilleur score Garden Simulator</h3>
+                    <div class="leaderboard-entry">
+                        <span class="rank">1</span>
+                        <span class="player-name">${bestScore.playerName}</span>
+                        <span class="score">${bestScore.score} 🪙</span>
+                    </div>
+                </div>
+            `;
+        } else {
+            bestScoreContainer.innerHTML = '<p>Aucun score enregistré</p>';
+        }
+        
+        // Exemple d'affichage personnalisé
+        const scores = GardenSimulatorLeaderboard.getTopScores(3);
+        const customContainer = document.getElementById('custom-leaderboard');
+        
+        if (scores.length > 0) {
+            let html = '<div style="background-color: #f0f0f0; padding: 15px; border-radius: 5px;">';
+            html += '<h3 style="color: #333;">Scores Garden Simulator</h3>';
+            
+            scores.forEach((entry, index) => {
+                html += `
+                    <div style="display: flex; margin: 10px 0; align-items: center;">
+                        <span style="font-weight: bold; margin-right: 10px;">#${index + 1}</span>
+                        <span>${entry.playerName}</span>
+                        <span style="margin-left: auto; font-weight: bold;">${entry.score} 🪙</span>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            customContainer.innerHTML = html;
+        } else {
+            customContainer.innerHTML = '<p>Aucun score enregistré</p>';
+        }
+    </script>
+</body>
+</html> 

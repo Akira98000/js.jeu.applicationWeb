@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garden Simulator</title>
+    <link rel="icon" type="image/png" href="src/assets/garden_simulator_icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./src/css/styles.css">
+    <link rel="stylesheet" href="./src/css/layout-improvements.css">
+    <link rel="stylesheet" href="./src/css/responsive-fixes.css">
+    <link rel="stylesheet" href="./src/css/leaderboard-api.css">
+</head>
+<body>
+    <!-- Nouveau panel d'information pour les plantes -->
+    <div id="plant-info-panel" class="plant-info-panel">
+        <div class="plant-info-header">
+            <span class="plant-emoji"></span>
+            <h3 class="plant-name"></h3>
+            <button class="close-panel">×</button>
+        </div>
+        <div class="plant-info-content">
+            <div class="plant-info-section">
+                <h4>Caractéristiques</h4>
+                <div class="plant-info-grid">
+                    <div class="info-item">
+                        <span class="info-icon">🪙</span>
+                        <span class="info-label">Prix</span>
+                        <span class="info-value" id="plant-price"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">💰</span>
+                        <span class="info-label">Gain</span>
+                        <span class="info-value" id="plant-reward"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">⏱️</span>
+                        <span class="info-label">Temps</span>
+                        <span class="info-value" id="plant-time"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">📈</span>
+                        <span class="info-label">Profit</span>
+                        <span class="info-value" id="plant-profit"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="plant-info-section">
+                <h4>Cycle de croissance</h4>
+                <div class="growth-stages">
+                    <!-- Sera rempli dynamiquement -->
+                </div>
+            </div>
+            <div class="plant-info-section">
+                <h4>Impact des améliorations</h4>
+                <div class="tool-impact">
+                    <div class="tool-impact-item">
+                        <img src="./src/assets/pitchfork.png" alt="Fourche" class="tool-icon">
+                        <div class="impact-details">
+                            <span class="impact-label">Gain actuel</span>
+                            <span class="impact-value" id="current-reward"></span>
+                            <div class="impact-bar">
+                                <div class="impact-progress"></div>
+                            </div>
+                            <span class="impact-next" id="next-reward"></span>
+                        </div>
+                    </div>
+                    <div class="tool-impact-item">
+                        <img src="./src/assets/watering-can.png" alt="Arrosoir" class="tool-icon">
+                        <div class="impact-details">
+                            <span class="impact-label">Temps actuel</span>
+                            <span class="impact-value" id="current-time"></span>
+                            <div class="impact-bar">
+                                <div class="impact-progress watering-progress"></div>
+                            </div>
+                            <span class="impact-next" id="next-time"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="game-wrapper">
+        <header class="game-header">
+            <div class="stats-container">
+                <div class="stats-group">
+                    <div class="stat-item money">
+                        <i class="stat-icon">🪙</i>
+                        <span class="stat-label">Or:</span>
+                        <span id="money" class="stat-value">100</span>
+                    </div>
+                    <div class="stat-item seeds">
+                        <i class="stat-icon">🌱</i>
+                        <span class="stat-label">Graines:</span>
+                        <span id="seeds" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item timer">
+                        <i class="stat-icon">⏱️</i>
+                        <span class="stat-label">Temps:</span>
+                        <span id="timer" class="stat-value">5:00</span>
+                    </div>
+                </div>
+                
+                <div class="stats-group">
+                    <div class="stat-item level">
+                        <i class="stat-icon">📊</i>
+                        <span class="stat-label">Niveau:</span>
+                        <span id="current-level" class="stat-value">1</span>
+                    </div>
+                    <div class="stat-item objective">
+                        <i class="stat-icon">🎯</i>
+                        <span class="stat-label">Objectif:</span>
+                        <span id="current-objective" class="stat-value"></span>
+                    </div>
+                    <div class="stat-item leaderboard-button" onclick="showLeaderboard()">
+                        <i class="stat-icon">🏆</i>
+                        <span class="stat-label">Scores</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="game-content">
+            <aside class="side-panel market-panel">
+                <div class="panel-header">
+                    <h3>🌱 Plantes</h3>
+                </div>
+                <div class="scroll-container seeds-container">
+                    <div class="seeds-group">
+                        <div class="seed-item">
+                            <div class="seed-info-button" data-seed-type="basic">i</div>
+                            <div class="seed basic" draggable="true" ondragstart="drag(event)" id="basic-seed" data-seed-type="basic">🌱</div>
+                            <p>Herbe basique: Gratuit</p>
+                        </div>
+                        <div class="seed-item">
+                            <div class="seed-info-button" data-seed-type="radish">i</div>
+                            <div class="seed radish" draggable="true" ondragstart="drag(event)" id="radish-seed" data-seed-type="radish">🥬</div>
+                            <p>Radis: 8 🪙</p>
+                        </div>
+                        <div class="seed-item">
+                            <div class="seed-info-button" data-seed-type="carrot">i</div>
+                            <div class="seed carrot" draggable="true" ondragstart="drag(event)" id="carrot-seed" data-seed-type="carrot">🥕</div>
+                            <p>Carotte: 15 🪙</p>
+                        </div>
+                        <div class="seed-item">
+                            <div class="seed-info-button" data-seed-type="tomato">i</div>
+                            <div class="seed tomato" draggable="true" ondragstart="drag(event)" id="tomato-seed" data-seed-type="tomato">🍅</div>
+                            <p>Tomate: 25 🪙</p>
+                        </div>
+                        <div class="seed-item">
+                            <div class="seed-info-button" data-seed-type="potato">i</div>
+                            <div class="seed potato" draggable="true" ondragstart="drag(event)" id="potato-seed" data-seed-type="potato">🥔</div>
+                            <p>P. de terre: 35 🪙</p>
+                        </div>
+                        <div class="seed-item">
+                            <div class="seed-info-button" data-seed-type="corn">i</div>
+                            <div class="seed corn" draggable="true" ondragstart="drag(event)" id="corn-seed" data-seed-type="corn">🌽</div>
+                            <p>Maïs: 45 🪙</p>
+                        </div>
+                        <div class="seed-item">
+                            <div class="seed-info-button" data-seed-type="pumpkin">i</div>
+                            <div class="seed pumpkin" draggable="true" ondragstart="drag(event)" id="pumpkin-seed" data-seed-type="pumpkin">🎃</div>
+                            <p>Citrouille: 60 🪙</p>
+                        </div>
+                        <div class="seed-item">
+                            <div class="seed-info-button" data-seed-type="eggplant">i</div>
+                            <div class="seed eggplant" draggable="true" ondragstart="drag(event)" id="eggplant-seed" data-seed-type="eggplant">🍆</div>
+                            <p>Aubergine: 75 🪙</p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="field-container">
+                <div class="field">
+                    <div class="plot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="plot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="plot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="plot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="plot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="plot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="plot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="plot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="plot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                </div>
+            </main>
+
+            <aside class="side-panel upgrades-panel">
+                <div class="panel-header">
+                    <h3>⚡ Améliorations</h3>
+                </div>
+                <div class="scroll-container upgrades-container">
+                    <div class="upgrade-group vertical">
+                        <div class="upgrade-item full-width">
+                            <img src="./src/assets/pitchfork.png" alt="Fourche">
+                            <div class="upgrade-info">
+                                <div class="tool-level-container">
+                                    <span class="tool-level-label">Niveau</span>
+                                    <div class="tool-level-bar">
+                                        <div class="tool-level-progress" id="pitchfork-progress"></div>
+                                        <span class="tool-level-value" id="pitchfork-level">0</span>
+                                    </div>
+                                </div>
+                                <div class="tool-stat-container">
+                                    <span class="tool-stat-label">Efficacité</span>
+                                    <div class="tool-stat-value" id="pitchfork-bonus">x1.0</div>
+                                </div>
+                                <button onclick="upgradeTools('pitchfork')" id="pitchfork-upgrade" class="upgrade-button">
+                                    <span class="upgrade-icon">⬆️</span> Améliorer (50 🪙)
+                                </button>
+                            </div>
+                        </div>
+                        <div class="upgrade-item full-width">
+                            <img src="./src/assets/watering-can.png" alt="Arrosoir">
+                            <div class="upgrade-info">
+                                <div class="tool-level-container">
+                                    <span class="tool-level-label">Niveau</span>
+                                    <div class="tool-level-bar">
+                                        <div class="tool-level-progress" id="watering-can-progress"></div>
+                                        <span class="tool-level-value" id="watering-can-level">0</span>
+                                    </div>
+                                </div>
+                                <div class="tool-stat-container">
+                                    <span class="tool-stat-label">Vitesse</span>
+                                    <div class="tool-stat-value" id="watering-can-bonus">3s</div>
+                                </div>
+                                <button onclick="upgradeTools('watering-can')" id="watering-can-upgrade" class="upgrade-button">
+                                    <span class="upgrade-icon">⬆️</span> Améliorer (50 🪙)
+                                </button>
+                            </div>
+                        </div>
+                        <div class="upgrade-item expansion full-width">
+                            <button id="buy-field" onclick="buyNewField()" class="expansion-button">
+                                <span class="upgrade-icon">🌱</span> Acheter un nouveau champ (450 🪙)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Spacer placé entre le contenu principal et la barre d'outils pour créer l'espace nécessaire -->
+    <div class="tools-spacer"></div>
+
+    <!-- Déplacer le conteneur d'outils ici, en dehors de la structure principale -->
+    <div class="tools-container">
+        <div class="tools">
+            <h3>🔧 Outils</h3>
+            <div class="tools-wrapper">
+                <div class="tool-item">
+                    <img src="./src/assets/pitchfork.png" class="tool" draggable="true" ondragstart="drag(event)" id="pitchfork" alt="Fourche">
+                    <span class="tool-name">Fourche</span>
+                </div>
+                <div class="tool-item">
+                    <img src="./src/assets/watering-can.png" class="tool" draggable="true" ondragstart="drag(event)" id="watering-can" alt="Arrosoir">
+                    <span class="tool-name">Arrosoir</span>
+                </div>
+                <div class="tool-item">
+                    <img src="./src/assets/fertilizer.png" class="tool" draggable="true" ondragstart="drag(event)" id="fertilizer" alt="Fertilisant">
+                    <span class="tool-name">Fertilisant</span>
+                    <span class="tool-cost">8 🪙</span>
+                </div>
+                <div class="tool-item">
+                    <img src="./src/assets/weed-cutter.png" class="tool" onclick="useWeedCutter()" id="weed-cutter" alt="Désherbeur">
+                    <span class="tool-name">Désherbeur</span>
+                    <span class="tool-count" id="weed-cutter-count">0/3</span>
+                    <span class="tool-cost">15 🪙</span>
+                </div>
+                <div class="tool-item">
+                    <img src="./src/assets/auto-water.png" class="tool" onclick="useAutoWater()" id="auto-water" alt="Arroseur auto">
+                    <span class="tool-name">Arroseur</span>
+                    <span class="tool-count" id="auto-water-count">0/3</span>
+                    <span class="tool-cost">12 🪙</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p id="error-message"></p>
+
+    <div id="gameOver" class="game-over">
+        <div class="game-over-content">
+            <h2>🏆 Partie terminée! 🏆</h2>
+            <div id="finalStats"></div>
+            <button class="restart" onclick="window.location.reload()">Rejouer</button>
+        </div>
+        <div class="game-over-overlay"></div>
+    </div>
+
+    <!-- Modal de classement -->
+    <div id="leaderboardModal" class="leaderboard-modal">
+        <div class="leaderboard-modal-content">
+            <h2>🏆 Classement des meilleurs scores</h2>
+            <div id="leaderboardContent"></div>
+            <button class="close-leaderboard" onclick="hideLeaderboard()">Fermer</button>
+        </div>
+        <div class="leaderboard-modal-overlay" onclick="hideLeaderboard()"></div>
+    </div>
+
+    <!-- Importation des scripts -->
+    <script src="./src/js/sound.js"></script>
+    <script src="./src/js/tools.js"></script>
+    <script src="./src/js/player.js"></script>
+    <script src="./src/js/timer.js"></script>
+    <script src="./src/js/garden.js"></script>
+    <script src="./src/js/gameStats.js"></script>
+    <script src="./src/js/leaderboard-api.js"></script>
+    <script src="./src/js/game.js"></script>
+    <script src="./src/js/script.js"></script>
+</body>
+</html>
